@@ -102,3 +102,7 @@ permutation 排列
 combination 组合
 
 principle 原理
+
+vertex 顶点（单数）
+
+vertices 顶点（复数）
