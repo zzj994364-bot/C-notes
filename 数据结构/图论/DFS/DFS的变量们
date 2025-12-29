@@ -1,0 +1,236 @@
+# DFS中变量定义的三种方法
+
+## 全局变量
+
+### 本质
+在函数外部定义变量，所有递归调用共享同一个变量。
+
+### 用途
+- 统计全局信息（节点总数、路径总数等）
+- 记录最优解（最大值、最小值等）
+- 适合单次DFS调用的场景
+
+### 经典例子
+
+**例1：统计连通分量的节点数**
+```cpp
+vector<vector<int>> adj;
+vector<bool> visited;
+int component_size = 0;  // 全局变量
+
+void dfs(int u) {
+    visited[u] = true;
+    component_size++;  // 直接累加
+    
+    for (auto v : adj[u]) {
+        if (!visited[v]) {
+            dfs(v);
+        }
+    }
+}
+
+int main() {
+    // 初始化...
+    component_size = 0;  // 每次调用前重置
+    dfs(1);
+    cout << "Component size: " << component_size << endl;
+}
+```
+
+**例2：寻找树的直径（最长路径）**
+```cpp
+vector<vector<int>> adj;
+vector<bool> visited;
+int max_depth = 0;  // 全局变量记录最大深度
+
+void dfs(int u, int depth) {
+    visited[u] = true;
+    max_depth = max(max_depth, depth);  // 更新最大值
+    
+    for (auto v : adj[u]) {
+        if (!visited[v]) {
+            dfs(v, depth + 1);
+        }
+    }
+}
+```
+
+---
+
+## 引用参数
+
+### 本质
+通过引用传递变量，所有递归层共享同一个变量，但变量定义在调用者处。
+
+### 用途
+- 需要返回多个值
+- 便于重置和多次调用
+- 更好的函数封装性
+
+### 经典例子
+
+**例1：同时统计节点数和边数**
+```cpp
+vector<vector<int>> adj;
+vector<bool> visited;
+
+void dfs(int u, int& node_count, int& edge_count) {
+    visited[u] = true;
+    node_count++;
+    
+    for (auto v : adj[u]) {
+        edge_count++;  // 每条边都计数
+        if (!visited[v]) {
+            dfs(v, node_count, edge_count);
+        }
+    }
+}
+
+int main() {
+    int nodes = 0, edges = 0;
+    dfs(1, nodes, edges);  // 传入引用
+    cout << "Nodes: " << nodes << ", Edges: " << edges << endl;
+    
+    // 重新调用很方便
+    nodes = 0; edges = 0;
+    dfs(5, nodes, edges);
+}
+```
+
+**例2：寻找路径并记录最大权值和**
+```cpp
+vector<vector<pair<int, int>>> adj;  // {邻接点, 边权}
+vector<bool> visited;
+
+void dfs(int u, int current_sum, int& max_sum) {
+    visited[u] = true;
+    max_sum = max(max_sum, current_sum);
+    
+    for (auto [v, weight] : adj[u]) {
+        if (!visited[v]) {
+            dfs(v, current_sum + weight, max_sum);
+        }
+    }
+}
+
+int main() {
+    int result = 0;
+    dfs(1, 0, result);
+    cout << "Max sum: " << result << endl;
+}
+```
+
+---
+
+## 返回值
+
+### 本质
+- 每次递归调用返回计算结果，通过返回值向上传递信息。、
+
+- 每次递归返回**一个值**
+
+- 适合**合并子树信息**
+
+- 不适合**填充整个数组**
+
+### 用途
+- 树形DP
+- 需要合并子树结果
+- 函数式编程风格，无副作用
+
+### 经典例子
+
+**例1：计算子树大小**
+```cpp
+vector<vector<int>> adj;
+vector<bool> visited;
+
+int dfs(int u) {
+    visited[u] = true;
+    int size = 1;  // 当前节点贡献1
+    
+    for (auto v : adj[u]) {
+        if (!visited[v]) {
+            size += dfs(v);  // 累加子树大小
+        }
+    }
+    
+    return size;
+}
+
+int main() {
+    int subtree_size = dfs(1);
+    cout << "Subtree size: " << subtree_size << endl;
+}
+```
+
+**例2：树形DP - 计算树的高度**
+```cpp
+vector<vector<int>> adj;
+vector<bool> visited;
+
+int dfs(int u) {
+    visited[u] = true;
+    int max_height = 0;
+    
+    for (auto v : adj[u]) {
+        if (!visited[v]) {
+            max_height = max(max_height, dfs(v));
+        }
+    }
+    
+    return max_height + 1;  // 当前节点高度 = 子树最大高度 + 1
+}
+
+int main() {
+    int tree_height = dfs(1);
+    cout << "Tree height: " << tree_height << endl;
+}
+```
+
+**例3：返回多个值（使用pair）**
+
+```cpp
+vector<vector<int>> adj;
+vector<bool> visited;
+
+// 返回 {子树节点数, 子树最大深度}
+pair<int, int> dfs(int u, int depth) {
+    visited[u] = true;
+    int nodes = 1;
+    int max_depth = depth;
+    
+    for (auto v : adj[u]) {
+        if (!visited[v]) {
+            auto [sub_nodes, sub_depth] = dfs(v, depth + 1);
+            nodes += sub_nodes;
+            max_depth = max(max_depth, sub_depth);
+        }
+    }
+    
+    return {nodes, max_depth};
+}
+
+int main() {
+    auto [total_nodes, max_depth] = dfs(1, 0);
+    cout << "Nodes: " << total_nodes << ", Max depth: " << max_depth << endl;
+}
+```
+
+---
+
+## 三种方法对比
+
+| 方法 | 优点 | 缺点 | 最佳场景 |
+|------|------|------|----------|
+| 全局变量 | 代码简洁，无参数传递开销 | 多次调用需重置，不易维护 | 单次DFS，统计全局信息 |
+| 引用参数 | 灵活，便于重置，可返回多值 | 参数列表变长 | 需要累积多个值，多次调用 |
+| 返回值 | 函数式，清晰，易于理解 | 只适合可合并的结果 | 树形DP，计算子树信息 |
+
+## 选择建议
+
+- **统计总数/最值** → 全局变量或引用参数
+- **树形DP/子树信息** → 返回值
+- **需要多个累积值** → 引用参数
+- **代码简洁优先** → 全局变量
+- **函数封装性优先** → 返回值或引用参数

@@ -772,7 +772,7 @@ int main() {
         cout << "s1 not equals s2" << endl;
     }
     
-    // 字典序比较
+    // 字典序比较（遍历所有对应字符进行比较）
     if (s1 < s2) {
         cout << "s1 < s2" << endl;  // apple < banana
     }

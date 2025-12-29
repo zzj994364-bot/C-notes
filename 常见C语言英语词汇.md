@@ -1,13 +1,15 @@
-| -------- | ----- | ----- | ------- | --- |
-| 英文单词     | 含义    | 中文对应  | 举例      | 谁是谁 |
-| exponent | 指数    | “几次”  | 2^3 = 8 | 次数  |
-| power    | 幂（结果） | “几次幂” | 2^3 = 8 | 结果  |
 base 底数
 binary representation二进制
 bracket括号
+
+column 列
+
 calculation 计算
 closing bracket闭括号
 combination 组合
+
+delta 变化量；三角洲
+
 enqueue入队 dequeue出队
 even偶 （0是偶数）
 exponent 幂
@@ -17,6 +19,9 @@ factorial 阶乘
 factorial 阶乘
 freq = frequency 频率
 GCD（greatest common divisor)  = HCF (highest common factor)
+
+grid 网格
+
 index 索引，下标
 initialize 初始化
 initially 最初地
@@ -27,6 +32,9 @@ LCM （least common multiple) 最小公倍数
 matrix 矩阵
 modular（mod）取模
 module 取模（求余数）
+
+node 节点
+
 odd奇
 opening bracket开括号
 operation 运算
@@ -39,6 +47,9 @@ prime number质数
 principle 原理
 queue队列
 recursion 递归
+
+row 行
+
 segment  subarray连续区间
 signed integer（有符号整数）：可以表示 **正数、负数和零**。
 space separated空格隔开的

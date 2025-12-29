@@ -58,7 +58,7 @@ while(!pq.empty()) {
     pq.pop();
 }   //clear
 
-priority_queue <type, vecotr<type>, greater<type>> pq; // create a min-heap priority queue
+priority_queue <type, vector<type>, greater<type>> pq; // create a min-heap priority queue
 
 int n;
 cin >> n;
